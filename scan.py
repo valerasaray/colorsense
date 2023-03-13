@@ -1,12 +1,11 @@
 import numpy as np
 from PIL import Image
 
-
-image_path = 'priroda.png'
-input = Image.open(image_path)
-start_image = np.array(input)
-
-image = np.array([a for b in start_image for a in b])
+def image_to_rgb(image_path):
+    input = Image.open(image_path)
+    start_image = np.array(input)
+    rgb = np.array([a for b in start_image for a in b])
+    return rgb
 
 # функция преобразования списка значений rgb в hex код
 def rgb_to_hex(rgb):

@@ -5,15 +5,17 @@ from sklearn.cluster import KMeans
 from random import randint as r
 from scipy.spatial.distance import cdist
 
-from scan import image as a
+from scan import image_to_rgb
 from scan import rgb_to_hex
 
+a = image_to_rgb('images/uk.jpg')
+print(a)
 
 distortions = []
 inertias = []
 mapping1 = {}
 mapping2 = {}
-K = range(1, 10)
+K = range(1, 20)
 
 print('+++')
 
@@ -55,7 +57,7 @@ plt.title('Метод локтя для инерции')
 
 print('+++')
 
-kmeans = KMeans(n_clusters=3)
+kmeans = KMeans(n_clusters=4)
 
 kmeans.fit(a)
 
