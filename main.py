@@ -8,7 +8,7 @@ from scipy.spatial.distance import cdist
 from scan import image_to_rgb
 from scan import rgb_to_hex
 
-a = image_to_rgb('images/uk.jpg')
+a = image_to_rgb('images/00000027.jpg')
 print(a)
 
 distortions = []
@@ -57,7 +57,7 @@ plt.title('Метод локтя для инерции')
 
 print('+++')
 
-kmeans = KMeans(n_clusters=4)
+kmeans = KMeans(n_clusters=10)
 
 kmeans.fit(a)
 
@@ -65,11 +65,11 @@ print(kmeans.cluster_centers_)
 
 print(rgb_to_hex(list(kmeans.cluster_centers_)))
 
-colors = matplotlib.colors.ListedColormap(rgb_to_hex(kmeans.cluster_centers_))
+hex_colors = rgb_to_hex(kmeans.cluster_centers_)
+colors = matplotlib.colors.ListedColormap(hex_colors)
 all_colors = matplotlib.colors.ListedColormap(rgb_to_hex(a))
 
 plt.figure(2)
-
 plt.axes(projection="3d").scatter(a[:,0],a[:,1], a[:,2], c=kmeans.labels_, cmap=colors)
 
 plt.figure(3)

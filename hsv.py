@@ -2,46 +2,62 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 
 import numpy as np
-from colorsys import rgb_to_hsv
+from colorsys import rgb_to_hsv, hsv_to_rgb
 from PIL import Image
 from scan import image_to_rgb
+from scan import rgb_to_hex
+import matplotlib.colors
 
 image_path = 'image/pix2.jpg'
 
-def mode_hsv_
+def mode_hsv_to_rgb(hsv):
+    rgb = np.array(hsv_to_rgb(hsv[0]/360, hsv[1]/100, hsv[2]/100))
+    rgb = np.array(list(map(lambda x: int(x*250), rgb)))
+    return rgb
 
 def mode_rgb_to_hsv(rgb):
     hsv = np.array(rgb_to_hsv(rgb[0]/255, rgb[1]/255, rgb[2]/255))
-    hsv[0] = int(hsv[0] * 360)
+    hsv[0] *= 360
     hsv[1] *= 100
     hsv[2] *= 100
     hsv = np.array(list(map(lambda x: int(x), hsv)))
     return hsv
-print('+++')
 
-def image_to_hsv(image_path):
+def image_to_rgb_hsv(image_path):
     rgb = image_to_rgb(image_path)
     hsv = []
     for i in rgb:
         hsv.append(mode_rgb_to_hsv(i))
-    return np.array(hsv)
-
-hsv = image_to_hsv('images/uk.jpg')
+    return [np.array(rgb), np.array(hsv)]
 
 
+image = image_to_rgb_hsv('images/00000027.jpg')
+rgb = image[0]
+hsv = image[1]
 
 
 
-
-
-kmeans = KMeans(n_clusters=4)
+kmeans = KMeans(n_clusters=10)
 
 kmeans.fit(hsv)
 
-print(kmeans.cluster_centers_)
+def hsv_centroids_to_rgb():
+    rgb_centroids = []
+    for i in kmeans.cluster_centers_:
+        rgb_centroids.append(mode_hsv_to_rgb(i))
+    return np.array(rgb_centroids)
 
 
+hex_colors = rgb_to_hex(hsv_centroids_to_rgb())
+colors = matplotlib.colors.ListedColormap(hex_colors)
+all_colors = matplotlib.colors.ListedColormap(rgb_to_hex(rgb))
 
-plt.figure(1)
-plt.axes(projection="3d").scatter(hsv[:,0],hsv[:,1], hsv[:,2], c=kmeans.labels_)
+print(hex_colors)
+
+plt.figure(2)
+plt.axes(projection="3d").scatter(hsv[:,0],hsv[:,1], hsv[:,2], c=kmeans.labels_, cmap=colors)
+
+plt.figure(3)
+plt.axes(projection="3d").scatter(hsv[:,0],hsv[:,1], hsv[:,2], c=[range(len(hsv))], cmap=all_colors)
+
 plt.show()
