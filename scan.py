@@ -2,8 +2,9 @@ import numpy as np
 from PIL import Image
 
 def image_to_rgb(image_path):
-    input = Image.open(image_path)
-    start_image = np.array(input)
+    img = Image.open(image_path)
+    img.show()
+    start_image = np.array(img)
     rgb = np.array([a for b in start_image for a in b])
     return rgb
 

@@ -1,79 +1,42 @@
-import matplotlib.pyplot as plt
-import matplotlib.colors
-import numpy as np
-from sklearn.cluster import KMeans
-from random import randint as r
-from scipy.spatial.distance import cdist
+from rgb import rgb_clustering
+from hsv import hsv_clustering
 
-from scan import image_to_rgb
-from scan import rgb_to_hex
+image_name = input('Image name: ')
+image_path = f'images/{image_name}'
+mode = input('Color model: ')
+count_clusters = int(input('Count of clusters: '))
 
-a = image_to_rgb('images/00000027.jpg')
-print(a)
-
-distortions = []
-inertias = []
-mapping1 = {}
-mapping2 = {}
-K = range(1, 20)
-
-print('+++')
-
-for k in K:
-    # Building and fitting the model
-    kmeanModel = KMeans(n_clusters=k).fit(a)
-    kmeanModel.fit(a)
-  
-    distortions.append(sum(np.min(cdist(a, kmeanModel.cluster_centers_,
-                                        'euclidean'), axis=1)) / a.shape[0])
-    inertias.append(kmeanModel.inertia_)
-  
-    mapping1[k] = sum(np.min(cdist(a, kmeanModel.cluster_centers_,
-                                   'euclidean'), axis=1)) / a.shape[0]
-    mapping2[k] = kmeanModel.inertia_
+if mode == 'rgb' or mode == '1':
+    rgb_clustering(image_path, count_clusters)
+elif mode == 'hsv' or mode == '2':
+    hsv_clustering(image_path, count_clusters)
+elif mode == 'all' or mode == '3':
+    rgb_clustering(image_path, count_clusters)
+    hsv_clustering(image_path, count_clusters)
 
 
-# for key, val in mapping1.items():
-#     print(f'{key} : {val}')
-
-
-# for key, val in mapping2.items():
-#     print(f'{key} : {val}')
-
-plt.figure(1)
-plt.subplot (1, 2, 1)
-plt.plot(K, distortions, c='tab:orange')
-plt.xlabel('Количество кластеров K')
-plt.ylabel('Искажение')
-plt.title('Метод локтя для искажения')
-
-plt.figure(1)
-plt.subplot (1, 2, 2)
-plt.plot(K, inertias, c='tab:green')
-plt.xlabel('оличество кластеров K')
-plt.ylabel('Инерция')
-plt.title('Метод локтя для инерции')
-
-
-print('+++')
-
-kmeans = KMeans(n_clusters=10)
-
-kmeans.fit(a)
-
-print(kmeans.cluster_centers_)
-
-print(rgb_to_hex(list(kmeans.cluster_centers_)))
-
-hex_colors = rgb_to_hex(kmeans.cluster_centers_)
-colors = matplotlib.colors.ListedColormap(hex_colors)
-all_colors = matplotlib.colors.ListedColormap(rgb_to_hex(a))
-
-plt.figure(2)
-plt.axes(projection="3d").scatter(a[:,0],a[:,1], a[:,2], c=kmeans.labels_, cmap=colors)
-
-plt.figure(3)
-plt.axes(projection="3d").scatter(a[:,0],a[:,1], a[:,2], c=[range(len(a))], cmap=all_colors)
-
-plt.show()
-
+'''
+                              __gggrgM**M#mggg__
+                          __wgNN@"B*P""mp""@d#"@N#Nw__
+                        _g#@0F_a*F#  _*F9m_ ,F9*__9NG#g_
+                     _mN#F  aM"    #p"    !q@    9NL "9#Qu_
+                    g#MF _pP"L  _g@"9L_  _g""#__  g"9w_ 0N#p
+                  _0F jL*"   7_wF     #_gF     9gjF   "bJ  9h_
+                 j#  gAF    _@NL     _g@#_      J@u_    2#_  #_
+                ,FF_#" 9_ _#"  "b_  g@   "hg  _#"  !q_ jF "*_09_
+░█████╗░░█████╗░██╗░░░░░░█████╗░██████╗░░██████╗███████╗███╗░░██╗░██████╗███████╗
+██╔══██╗██╔══██╗██║░░░░░██╔══██╗██╔══██╗██╔════╝██╔════╝████╗░██║██╔════╝██╔════╝
+██║░░╚═╝██║░░██║██║░░░░░██║░░██║██████╔╝╚█████╗░█████╗░░██╔██╗██║╚█████╗░█████╗░░
+██║░░██╗██║░░██║██║░░░░░██║░░██║██╔══██╗░╚═══██╗██╔══╝░░██║╚████║░╚═══██╗██╔══╝░░
+╚█████╔╝╚█████╔╝███████╗╚█████╔╝██║░░██║██████╔╝███████╗██║░╚███║██████╔╝███████╗
+░╚════╝░░╚════╝░╚══════╝░╚════╝░╚═╝░░╚═╝╚═════╝░╚══════╝╚═╝░░╚══╝╚═════╝░╚══════╝
+    █▄▄ █▄█   █░█ ▄▀█ █░░ █▀▀ █▀█ ▄▀█   █▀▄ █░█ ▄▀█   █▀ ▄▀█ █▀█ ▄▀█ █▄█ ▄▀█
+    █▄█ ░█░   ▀▄▀ █▀█ █▄▄ ██▄ █▀▄ █▀█   █▄▀ ▀▄▀ █▀█   ▄█ █▀█ █▀▄ █▀█ ░█░ █▀█
+                 9# "b_j   "b_ g"    *g _gF    9_ g#"  "L_*"qNF
+                  "b_ "#_    "NL      _B#      _I@     j#" _#"
+                    NM_0"*g_ j""9u_  gP  q_  _w@ ]_ _g*"F_g@
+                     "NNh_ !w#_   9#g"    "m*"   _#*" _dN@"
+                        9##g_0@q__ #"4_  j*"k __*NF_g#@P"
+                          "9NN#gIPNL_ "b@" _2M"Lg#N@F"
+                              ""P@*NN#gEZgNN@#@P""
+'''

@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
-
 import numpy as np
 from colorsys import rgb_to_hsv, hsv_to_rgb
 from PIL import Image
@@ -8,7 +7,8 @@ from scan import image_to_rgb
 from scan import rgb_to_hex
 import matplotlib.colors
 
-image_path = 'image/pix2.jpg'
+
+
 
 def mode_hsv_to_rgb(hsv):
     rgb = np.array(hsv_to_rgb(hsv[0]/360, hsv[1]/100, hsv[2]/100))
@@ -31,33 +31,33 @@ def image_to_rgb_hsv(image_path):
     return [np.array(rgb), np.array(hsv)]
 
 
-image = image_to_rgb_hsv('images/00000027.jpg')
-rgb = image[0]
-hsv = image[1]
 
-
-
-kmeans = KMeans(n_clusters=10)
-
-kmeans.fit(hsv)
-
-def hsv_centroids_to_rgb():
+def hsv_centroids_to_rgb(kmeans):
     rgb_centroids = []
     for i in kmeans.cluster_centers_:
         rgb_centroids.append(mode_hsv_to_rgb(i))
     return np.array(rgb_centroids)
 
 
-hex_colors = rgb_to_hex(hsv_centroids_to_rgb())
-colors = matplotlib.colors.ListedColormap(hex_colors)
-all_colors = matplotlib.colors.ListedColormap(rgb_to_hex(rgb))
+def hsv_clustering(image_path, count_clusters):
+    kmeans = KMeans(n_clusters=count_clusters)
+    image = image_to_rgb_hsv(image_path)
+    rgb = image[0]
+    hsv = image[1]
 
-print(hex_colors)
 
-plt.figure(2)
-plt.axes(projection="3d").scatter(hsv[:,0],hsv[:,1], hsv[:,2], c=kmeans.labels_, cmap=colors)
+    kmeans.fit(hsv)
 
-plt.figure(3)
-plt.axes(projection="3d").scatter(hsv[:,0],hsv[:,1], hsv[:,2], c=[range(len(hsv))], cmap=all_colors)
+    hex_colors = rgb_to_hex(hsv_centroids_to_rgb(kmeans))
+    colors = matplotlib.colors.ListedColormap(hex_colors)
+    all_colors = matplotlib.colors.ListedColormap(rgb_to_hex(rgb))
 
-plt.show()
+    print(hex_colors)
+
+    plt.figure(2)
+    plt.axes(projection="3d").scatter(hsv[:,0],hsv[:,1], hsv[:,2], c=kmeans.labels_, cmap=colors)
+
+    plt.figure(3)
+    plt.axes(projection="3d").scatter(hsv[:,0],hsv[:,1], hsv[:,2], c=[range(len(hsv))], cmap=all_colors)
+
+    plt.show()
