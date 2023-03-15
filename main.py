@@ -1,19 +1,21 @@
 from rgb import rgb_clustering
 from hsv import hsv_clustering
+from hsv2 import hsv2_clustering
 
-image_name = input('Image name: ')
-image_path = f'images/{image_name}'
-mode = input('Color model: ')
-count_clusters = int(input('Count of clusters: '))
+# image_name = input('Image name: ')
+# image_path = f'test/{image_name}'
+# mode = input('Color model: ')
+# count_clusters = int(input('Count of clusters: '))
 
-if mode == 'rgb' or mode == '1':
-    rgb_clustering(image_path, count_clusters)
-elif mode == 'hsv' or mode == '2':
-    hsv_clustering(image_path, count_clusters)
-elif mode == 'all' or mode == '3':
-    rgb_clustering(image_path, count_clusters)
-    hsv_clustering(image_path, count_clusters)
+# if mode == 'rgb' or mode == '1':
+#     rgb_clustering(image_path, count_clusters)
+# elif mode == 'hsv' or mode == '2':
+#     hsv_clustering(image_path, count_clusters)
+# elif mode == 'all' or mode == '3':
+#     rgb_clustering(image_path, count_clusters)
+#     hsv_clustering(image_path, count_clusters)
 
+rgb_clustering('images/00000003_(7).jpg', 8)
 
 '''
                               __gggrgM**M#mggg__

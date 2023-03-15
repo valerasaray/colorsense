@@ -4,12 +4,13 @@ import numpy as np
 from sklearn.cluster import KMeans
 from random import randint as r
 from scipy.spatial.distance import cdist
+from sklearn.metrics import silhouette_score
 
 from scan import image_to_rgb
 from scan import rgb_to_hex
 
 
-def rgb_clustering(image_path, count_clusters):
+def rgb_clustering(image_path, cluster_count):
     a = image_to_rgb(image_path)
     print(a)
 
@@ -17,22 +18,31 @@ def rgb_clustering(image_path, count_clusters):
     inertias = []
     mapping1 = {}
     mapping2 = {}
-    K = range(1, 20)
+    K = range(2, 10)
 
     print('+++')
+    s_scores = []
 
     for k in K:
         # Building and fitting the model
-        kmeanModel = KMeans(n_clusters=k).fit(a)
-        kmeanModel.fit(a)
+        kmeans = KMeans(n_clusters=k).fit(a)
+        kmeans.fit(a)
     
-        distortions.append(sum(np.min(cdist(a, kmeanModel.cluster_centers_,
+        distortions.append(sum(np.min(cdist(a, kmeans.cluster_centers_,
                                             'euclidean'), axis=1)) / a.shape[0])
-        inertias.append(kmeanModel.inertia_)
+        inertias.append(kmeans.inertia_)
     
-        mapping1[k] = sum(np.min(cdist(a, kmeanModel.cluster_centers_,
+        mapping1[k] = sum(np.min(cdist(a, kmeans.cluster_centers_,
                                     'euclidean'), axis=1)) / a.shape[0]
-        mapping2[k] = kmeanModel.inertia_
+        mapping2[k] = kmeans.inertia_
+
+        kmeans = KMeans(n_clusters=k)
+        cluster_labels = kmeans.fit_predict(a)
+
+        # if k > 2:
+        #     score = silhouette_score(a, cluster_labels)
+        #     s_scores.append(score)
+        #     print(f'Количество кластеров: {k}, средний score: {score:.3f}')
 
 
     # for key, val in mapping1.items():
@@ -56,10 +66,8 @@ def rgb_clustering(image_path, count_clusters):
     plt.ylabel('Инерция')
     plt.title('Метод локтя для инерции')
 
-
-    print('+++')
-
-    kmeans = KMeans(n_clusters=count_clusters)
+    # cluster_count = s_scores.index(max(s_scores)) + 3
+    kmeans = KMeans(n_clusters=cluster_count)
 
     kmeans.fit(a)
 
